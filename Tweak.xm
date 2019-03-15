@@ -47,6 +47,7 @@ static NSUserDefaults *prefs;
 static bool enabled;
 static bool dndEnabled;
 static float iconHeight;
+static float iconWidth;
 static float iconSize;
 static UIImage *dnd;
 static UIImageView *dndView;
@@ -60,6 +61,7 @@ static void loadPrefs() {
   enabled = [prefs objectForKey:@"isEnabled"] ? [[prefs objectForKey:@"isEnabled"] boolValue] : YES;
   iconSize = [prefs objectForKey:@"iconSize"] ? [[prefs objectForKey:@"iconSize"] floatValue] : 20;
 	iconHeight = [prefs objectForKey:@"iconHeight"] ? [[prefs objectForKey:@"iconHeight"] floatValue] : 0;
+	iconWidth = [prefs objectForKey:@"iconWidth"] ? [[prefs objectForKey:@"iconWidth"] floatValue] : 0;
 }
 
 %group ios12
@@ -113,6 +115,29 @@ static void loadPrefs() {
 }
 %end
 
+%hook UIView
+-(void)layoutSubviews {
+	%orig;
+	for (UIView *aView in self.subviews) {
+    if([aView isKindOfClass:[%c(SLClockDragView) class]]){
+			if (enabled) {
+				[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+				if(alternateDateLabel && iconHeight==0) iconHeight+=25;
+
+				[dndView setFrame:CGRectMake(5+iconWidth,(self.frame.size.height + iconHeight),iconSize,iconSize)];
+				%orig;
+
+				if (dndEnabled && ![dndView.superview isEqual:self]) {
+					[self addSubview:dndView];
+				} else if (!dndEnabled && [dndView.superview isEqual:self]) {
+					[dndView removeFromSuperview];
+				}
+			}
+		}
+	}
+}
+%end
+
 %hook SBFLockScreenDateView
 -(id)initWithFrame:(CGRect)arg1 {
   dateView = %orig;
@@ -133,11 +158,11 @@ static void loadPrefs() {
 		alternateDateLabel = MSHookIvar<SBFLockScreenDateSubtitleDateView*>(self,"_dateSubtitleView").alternateDateLabel;
 		if(alternateDateLabel && iconHeight==0) iconHeight+=25;
 
-		if  ([[UIDevice currentDevice] orientation] == 3 || [[[UIDevice currentDevice] model] isEqual: @"iPad"]) [dndView setFrame:CGRectMake(0,(self.frame.size.height + iconHeight),iconSize,iconSize)];
-	 	else [dndView setFrame:CGRectMake(self.frame.size.width/2-(iconSize/2),(self.frame.size.height + iconHeight),iconSize,iconSize)];
+		if  ([[UIDevice currentDevice] orientation] == 3 || [[[UIDevice currentDevice] model] isEqual: @"iPad"]) [dndView setFrame:CGRectMake(0+iconWidth,(self.frame.size.height + iconHeight),iconSize,iconSize)];
+	 	else [dndView setFrame:CGRectMake(self.frame.size.width/2-(iconSize/2)+iconWidth,(self.frame.size.height + iconHeight),iconSize,iconSize)];
 
-		if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Twig.dylib"]) [dndView setFrame:CGRectMake((self.frame.size.width-iconSize),(self.frame.size.height + iconHeight),iconSize,iconSize)];
-		if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Jellyfish.dylib"]) [dndView setFrame:CGRectMake((self.frame.size.width-iconSize),(self.frame.size.height + iconHeight + 30),iconSize,iconSize)];
+		if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Twig.dylib"]) [dndView setFrame:CGRectMake((self.frame.size.width-iconSize)+iconWidth,(self.frame.size.height + iconHeight),iconSize,iconSize)];
+		if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Jellyfish.dylib"]) [dndView setFrame:CGRectMake((self.frame.size.width-iconSize)+iconWidth,(self.frame.size.height + iconHeight + 30),iconSize,iconSize)];
 		%orig;
 
 		if (dndEnabled && ![dndView.superview isEqual:self]) {
@@ -160,15 +185,50 @@ static void loadPrefs() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 %group ios11
-%hook SBFLockScreenDateView
+%hook UIView
+-(void)layoutSubviews {
+	%orig;
+	for (UIView *aView in self.subviews) {
+    if([aView isKindOfClass:[%c(SLClockDragView) class]]){
+			if (dndView) return;
+	    dnd = [UIImage imageWithContentsOfFile:@"/Library/leavemealone/dnd.png"];
+	    dndView = [[UIImageView alloc] initWithImage:[dnd imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+	    %orig;
+			if(alternateDateLabel && iconHeight==0) iconHeight+=25;
+			[dndView setFrame:CGRectMake(5+iconWidth,(self.frame.size.height + iconHeight),iconSize,iconSize)];
 
+	    if (%c(DNDStateService))
+	        dndEnabled = [[%c(DNDStateService) serviceForClientIdentifier:dndClientID] queryCurrentStateWithError:nil].active;
+	    else
+	        dndEnabled = [%c(PSDNDSettingsDetail) isEnabled];
+
+	    if (dndEnabled)
+	        [self addSubview:dndView];
+
+	    BBSettingsGateway *_settingsGateway = [[NSClassFromString(@"BBSettingsGateway") alloc] initWithQueue:dispatch_get_main_queue()];
+	    if ([_settingsGateway respondsToSelector:@selector(setActiveBehaviorOverrideTypesChangeHandler:)]) {
+	      [_settingsGateway setActiveBehaviorOverrideTypesChangeHandler:^(int value) {
+	    	if (value == 1) {
+	        [self addSubview:dndView];
+	      } else {
+	        [dndView removeFromSuperview];
+	      }
+	  	}];
+	  }
+	}
+}
+}
+%end
+
+%hook SBFLockScreenDateView
 -(void)setLegibilitySettings:(_UILegibilitySettings *)arg1 {
   dndView.tintColor = arg1.primaryColor;
   %orig;
 }
 
 -(void)didMoveToWindow {
-  if (dndView) return;
+	NSLog(@"h");
+  if (!enabled || dndView || [fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/SimpleLSiOS10.dylib"] || [fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/SimpleLSiOSiPad.dylib"]) return;
     dateView = self;
     dnd = [UIImage imageWithContentsOfFile:@"/Library/leavemealone/dnd.png"];
     dndView = [[UIImageView alloc] initWithImage:[dnd imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
@@ -176,11 +236,11 @@ static void loadPrefs() {
 		alternateDateLabel = MSHookIvar<SBFLockScreenDateSubtitleDateView*>(self,"_dateSubtitleView").alternateDateLabel;
 		if(alternateDateLabel && iconHeight==0) iconHeight+=25;
 
-    if (!UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)|| [[[UIDevice currentDevice] model] isEqual: @"iPad"]) [dndView setFrame:CGRectMake((self.frame.size.width/2-iconSize/2),(self.frame.size.height + iconHeight),iconSize,iconSize)];
-    else [dndView setFrame:CGRectMake(0,(self.frame.size.height + iconHeight),iconSize,iconSize)];
+    if (!UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)|| [[[UIDevice currentDevice] model] isEqual: @"iPad"]) [dndView setFrame:CGRectMake((self.frame.size.width/2-iconSize/2)+iconWidth,(self.frame.size.height + iconHeight),iconSize,iconSize)];
+    else [dndView setFrame:CGRectMake(0+iconWidth,(self.frame.size.height + iconHeight),iconSize,iconSize)];
 
-    if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Twig.dylib"]) [dndView setFrame:CGRectMake((self.frame.size.width-iconSize),(self.frame.size.height + iconHeight),iconSize,iconSize)];
-    if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Jellyfish.dylib"]) [dndView setFrame:CGRectMake((self.frame.size.width-25),(self.frame.size.height + iconHeight+30),iconSize,iconSize)];
+    if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Twig.dylib"]) [dndView setFrame:CGRectMake((self.frame.size.width-iconSize)+iconWidth,(self.frame.size.height + iconHeight),iconSize,iconSize)];
+    if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Jellyfish.dylib"]) [dndView setFrame:CGRectMake((self.frame.size.width-25)+iconWidth,(self.frame.size.height + iconHeight+30),iconSize,iconSize)];
 
     if (%c(DNDStateService))
         dndEnabled = [[%c(DNDStateService) serviceForClientIdentifier:dndClientID] queryCurrentStateWithError:nil].active;

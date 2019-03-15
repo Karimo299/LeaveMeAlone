@@ -4,6 +4,7 @@ BUNDLE_NAME = LeaveMeAlone
 LeaveMeAlone_FILES = LMARootListController.m
 LeaveMeAlone_INSTALL_PATH = /Library/PreferenceBundles
 LeaveMeAlone_FRAMEWORKS = UIKit
+LeaveMeAlone_EXTRA_FRAMEWORKS += CepheiPrefs
 LeaveMeAlone_PRIVATE_FRAMEWORKS = Preferences
 
 include $(THEOS_MAKE_PATH)/bundle.mk

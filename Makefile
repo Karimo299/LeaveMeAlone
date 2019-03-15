@@ -2,7 +2,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = LeaveMeAlone
 LeaveMeAlone_FILES = Tweak.xm
-
+LeaveMeAlone_EXTRA_FRAMEWORKS += Cephei
 include $(THEOS_MAKE_PATH)/tweak.mk
 
 after-install::
