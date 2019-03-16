@@ -280,18 +280,6 @@ static void loadPrefs() {
 }
 %end
 
-%hook BBServer
--(void)publishBulletinRequest:(BBBulletinRequest*)request destinations:(unsigned long long)arg2 alwaysToLockScreen:(BOOL)arg3
-{
-	NSString* bundleID = request.sectionID;
-	if ([bundleID isEqualToString:@""])
-    {
-
-	}
-    %orig;
-}
-%end
-
 %hook NCNotificationListCollectionView
 - (void)setFrame:(CGRect)arg1 {
 	arg1.origin.y = arg1.origin.y + 20 + iconHeight;
