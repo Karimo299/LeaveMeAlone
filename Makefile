@@ -1,3 +1,4 @@
+ARCHS = arm64 arm64e
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = LeaveMeAlone
@@ -9,7 +10,9 @@ after-install::
 	install.exec "killall -9 SpringBoard"
 
 internal-stage::
-	mkdir -p "$(THEOS_STAGING_DIR)/Library/leavemealone"
-	cp Resources/* "$(THEOS_STAGING_DIR)/Library/leavemealone"
+	mkdir -p "$(THEOS_STAGING_DIR)/var/mobile/Library/LeaveMeAlone"
+	cp Resources/* "$(THEOS_STAGING_DIR)/var/mobile/Library/LeaveMeAlone"
+
 SUBPROJECTS += leavemealone
+SUBPROJECTS += leavemealonestatusbar
 include $(THEOS_MAKE_PATH)/aggregate.mk

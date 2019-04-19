@@ -7,6 +7,14 @@
 			<dict>
 				<key>cell</key>
 				<string>PSGroupCell</string>
+				<key>headerCellClass</key>
+				<string>HBImageTableCell</string>
+				<key>icon</key>
+				<string>LeaveMeAlone.png</string>
+			</dict>
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
 				<key>label</key>
 				<string>Main</string>
 			</dict>
@@ -28,7 +36,41 @@
 				<key>cell</key>
 				<string>PSGroupCell</string>
 				<key>label</key>
-				<string>Size</string>
+				<string>Statusbar</string>
+			</dict>
+			<dict>
+				<key>cell</key>
+				<string>PSSwitchCell</string>
+				<key>default</key>
+				<true/>
+				<key>PostNotification</key>
+				<string>com.karimo299.leavemealone/prefChanged</string>
+				<key>defaults</key>
+				<string>com.karimo299.leavemealone</string>
+				<key>key</key>
+				<string>color</string>
+				<key>label</key>
+				<string>Enable statusbar coloring</string>
+			</dict>
+			<dict>
+				<key>cell</key>
+				<string>PSSwitchCell</string>
+				<key>default</key>
+				<true/>
+				<key>PostNotification</key>
+				<string>com.karimo299.leavemealone/prefChanged</string>
+				<key>defaults</key>
+				<string>com.karimo299.leavemealone</string>
+				<key>key</key>
+				<string>hideDND</string>
+				<key>label</key>
+				<string>Hide DND icon in statusbar</string>
+			</dict>
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+				<key>label</key>
+				<string>Icon Size</string>
 			</dict>
 			<dict>
 				<key>showValue</key>
@@ -127,44 +169,58 @@
 			<dict>
 				<key>big</key>
 				<true/>
-				<key>cellClass</key>
-				<string>HBTwitterCell</string>
 				<key>height</key>
 				<integer>56</integer>
+				<key>cellClass</key>
+				<string>HBTwitterCell</string>
 				<key>label</key>
 				<string>Karimo299</string>
 				<key>user</key>
 				<string>Karimo299</string>
-				<key>action</key>
-				<string>tweet</string>
 			</dict>
 			<dict>
-				<key>cell</key>
-				<string>PSButtonCell</string>
-				<key>icon</key>
-				<string>paypal.png</string>
+				<key>cellClass</key>
+				<string>HBLinkTableCell</string>
 				<key>label</key>
-				<string>Support my Work</string>
-				<key>action</key>
-				<string>paypal</string>
+				<string>Paypal</string>
+				<key>subtitle</key>
+				<string>Support My work!</string>
+				<key>url</key>
+				<string>http://paypal.me/Karimo299</string>
 			</dict>
 			<dict>
 				<key>cell</key>
 				<string>PSGroupCell</string>
 				<key>label</key>
-				<string>Source code</string>
-				<key>footerText</key>
-				<string>Thanks for downloading, enjoy :)</string>
+				<string>Designer</string>
+			</dict>
+			<dict>
+				<key>big</key>
+				<true/>
+				<key>cellClass</key>
+				<string>HBTwitterCell</string>
+				<key>height</key>
+				<integer>56</integer>
+				<key>label</key>
+				<string>TPINPAL</string>
+				<key>user</key>
+				<string>TPINPAL</string>
 			</dict>
 			<dict>
 				<key>cell</key>
-				<string>PSButtonCell</string>
-				<key>icon</key>
-				<string>github.png</string>
+				<string>PSGroupCell</string>
 				<key>label</key>
-				<string>Github</string>
-				<key>action</key>
-				<string>git</string>
+				<string></string>
+			</dict>
+			<dict>
+				<key>cellClass</key>
+				<string>HBLinkTableCell</string>
+				<key>label</key>
+				<string>Source Code</string>
+				<key>subtitle</key>
+				<string>Check it out!</string>
+				<key>url</key>
+				<string>http://github.com/Karimo299/ControlPlz</string>
 			</dict>
 		</array>
 		<key>title</key>

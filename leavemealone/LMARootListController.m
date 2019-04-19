@@ -1,9 +1,4 @@
 #include "LMARootListController.h"
-#include <spawn.h>
-#include <signal.h>
-// #import <CepheiPrefs/HBRootListController.h>
-// #import <CepheiPrefs/HBAppearanceSettings.h>
-// #import <Cephei/HBPreferences.h>
 
 @implementation LMARootListController
 
@@ -13,18 +8,6 @@
 	}
 
 	return _specifiers;
-}
-
-- (void) paypal {
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"https://paypal.me/Karimo299"]];
-}
-	//Github source code button
-- (void) git {
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"https://github.com/Karimo299/CCringer"]];
-}
-	//Twitter button
-- (void) tweet {
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"https://twitter.com/karimo299"]];
 }
 
 - (void) respring {

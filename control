@@ -1,7 +1,7 @@
 Package: com.karimo299.leavemealone
 Name: LeaveMeAlone
 Depends: mobilesubstrate, preferenceloader, ws.hbang.common
-Version: 2.1.0
+Version: 2.2.0
 Architecture: iphoneos-arm
 Description: Adds the dnd icon under the date, and removes the annoying dnd banner on iOS 12
 Maintainer: Karimo299
