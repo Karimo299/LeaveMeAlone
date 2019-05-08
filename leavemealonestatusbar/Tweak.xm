@@ -137,13 +137,16 @@ static void loadPrefs() {
 
 %ctor {
   float version = [[[UIDevice currentDevice] systemVersion] floatValue];
-  if (version >= 12) %init(ios12);
-  if (version >= 11 && version < 12) %init(ios11);
-  %init(tweak);
   CFNotificationCenterAddObserver(
     CFNotificationCenterGetDarwinNotifyCenter(), NULL,
     (CFNotificationCallback)loadPrefs,
     CFSTR("com.karimo299.leavemealone/prefChanged"), NULL,
     CFNotificationSuspensionBehaviorDeliverImmediately);
-    loadPrefs();
+  loadPrefs();
+
+	%init(tweak);
+	if (color) {
+		if (version >= 12) %init(ios12);
+		if (version >= 11 && version < 12) %init(ios11);
+	}
 }

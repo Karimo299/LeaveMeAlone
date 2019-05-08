@@ -148,7 +148,7 @@
 				<key>cell</key>
 				<string>PSButtonCell</string>
 				<key>label</key>
-				<string>Reset All Settings to Defualt</string>
+				<string>Reset All Settings to Default</string>
 				<key>action</key>
 				<string>reset</string>
 			</dict>

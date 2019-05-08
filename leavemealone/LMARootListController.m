@@ -37,14 +37,14 @@
 }
 
 	- (void) reset {
-	UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Reset All Settings to Defualt"
-	message:@"Are You Sure You Want To Reset All Settings to Defualt?"
+	UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Reset All Settings to Default"
+	message:@"Are You Sure You Want To Reset All Settings to Default?"
 	preferredStyle:UIAlertControllerStyleActionSheet];
 
-	UIAlertAction *resetBtn = [UIAlertAction actionWithTitle:@"Reset All Settings to Defualt"
+	UIAlertAction *resetBtn = [UIAlertAction actionWithTitle:@"Reset All Settings to Default"
 	style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
 		for(PSSpecifier *specifier in [self specifiers]) {
-                [super setPreferenceValue:[specifier propertyForKey:@"default"] specifier:specifier];
+                [super setPreferenceValue:[specifier propertyForKey:@"Default"] specifier:specifier];
       }
     [self reloadSpecifiers];
 	}];
